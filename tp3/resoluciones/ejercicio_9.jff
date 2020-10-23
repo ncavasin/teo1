@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 6.4.--><structure>
+	<type>mealy</type>
+	<automaton>
+		<!--The list of states.-->
+		<state id="0" name="$0">
+			<x>95.0</x>
+			<y>90.0</y>
+			<initial/>
+		</state>
+		<state id="1" name="$0.50">
+			<x>266.0</x>
+			<y>90.0</y>
+		</state>
+		<state id="2" name="$0.25">
+			<x>266.0</x>
+			<y>263.0</y>
+		</state>
+		<state id="3" name="$1">
+			<x>461.0</x>
+			<y>90.0</y>
+		</state>
+		<state id="4" name="q4">
+			<x>638.0</x>
+			<y>90.0</y>
+		</state>
+		<state id="5" name="$0.75">
+			<x>461.0</x>
+			<y>262.0</y>
+		</state>
+		<state id="6" name="$1.25">
+			<x>638.0</x>
+			<y>262.0</y>
+		</state>
+		<!--The list of transitions.-->
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>$0.50</read>
+			<transout/>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>5</to>
+			<read>$0.25</read>
+			<transout/>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>5</to>
+			<read>$0.50</read>
+			<transout/>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>3</to>
+			<read>$0.25</read>
+			<transout/>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>2</to>
+			<read>$0.25</read>
+			<transout/>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>4</to>
+			<read>B</read>
+			<transout>boleto</transout>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>4</to>
+			<read>B</read>
+			<transout>boleto</transout>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>3</to>
+			<read>$0.50</read>
+			<transout/>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>1</to>
+			<read>$0.25</read>
+			<transout/>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>6</to>
+			<read>$0.50</read>
+			<transout>+.25</transout>
+		</transition>
+	</automaton>
+</structure>
