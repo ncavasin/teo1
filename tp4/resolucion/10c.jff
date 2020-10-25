@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 6.4.--><structure>
+	<type>grammar</type>
+	<!--The list of productions.-->
+	<production>
+		<left>E</left>
+		<right>E+T</right>
+	</production>
+	<production>
+		<left>E</left>
+		<right>T</right>
+	</production>
+	<production>
+		<left>E</left>
+		<right>E-T</right>
+	</production>
+	<production>
+		<left>T</left>
+		<right>T*F</right>
+	</production>
+	<production>
+		<left>T</left>
+		<right>F</right>
+	</production>
+	<production>
+		<left>T</left>
+		<right>T/F</right>
+	</production>
+	<production>
+		<left>F</left>
+		<right>id</right>
+	</production>
+	<production>
+		<left>F</left>
+		<right>cte</right>
+	</production>
+	<production>
+		<left>F</left>
+		<right>(E)</right>
+	</production>
+</structure>
