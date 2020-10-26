@@ -23,12 +23,13 @@ import java_cup.runtime.Symbol;
 	private final Float FLOAT_MAX_LEN = 4294967296 	/* 2³²*/
 	
 	
-	// Tabla de simbolos
-	// Lista de mapas con NOMBRE | TOKEN | TIPO | VALOR | LONGITUD
+	// Tabla de simbolos: una lista con mapas en cada elemento de la lista
+	// Cada mapa representa un simbolo e info asociada a este
+	// Formato de cada mapa:  NOMBRE | TOKEN | TIPO | VALOR | LONGITUD
 	private List<Map<Columna, String>> symTable;
 	
 	
-	// Inicializo mapa
+	// Inicializo tabla de simbolos
 	private void iniTable(){
 		symTable = new List<Map<Columna, String>>();
 	
@@ -118,9 +119,17 @@ CHAR = {DIGITO}|{LETRA}|{ESPACIO}
 COMILLA = \"
 
 OPERADORES = \+|\-|\*|\/
+OP_LOGICO = \<|\<\=|\=\=|\<\>|\>|\>\=|\&\&|\|\|
+
+SEP_SENTENCIA = \;
+
+BLOQUE_ABRE = \{
+BLOQUE_CIERRA = \}
+
+COMENTARIO = "</"[^"</"]*"/>"
 
 // Longitud maxima de los ints es 16 bits
-CONST_INT = {DIGITO}+
+CONST_INT = 0 | [1-9]{DIGITO}*
 	
 // Longitud maxima de los floats es 32 bits
 // Acepta: 12.12 / 12. / .12
@@ -133,79 +142,96 @@ CONST_STR = {COMILLA}{CHAR}*{COMILLA}
 // Longitud maxima del nombre de variable es 30
 ID_VAR = {LETRA}({LETRA}|{DIGITO}|\_)*
 
-BEGIN_PROGRAM = [B][E][G][I][N]{PUNTO}[P][R][O][G][R][A][M]
+NUMERO = {CONST_INT}|{CONST_FLOAT}
+EXPRESION = {NUMERO}|{CONST_STR}
+
+VALOR = {ID_VAR}|{NUMERO}|{ID_VAR}{OPERADOR}{NUMERO}|{NUMERO}{OPERADOR}{NUMERO} 
+ASIGNACION = {ID_VAR}":="{VALOR}
+
+
+
+SENTENCIA = {IF}|{WHILE}|{PRINT}|{TAKE}|{ASIGNACION}{SEP_SENTENCIA}
+CONTENIDO = {SENTENCIA}
+BLOQUE = {BLOQUE_ABRE}{CONTENIDO}{BLOQUE_CIERRA}
+CONDICION = \({EXPRESION}{OP_LOGICO}{EXPRESION}\) /* FALTA HACER QUE SE ANIDEN CONDICIONES */
+
+IF = ([I][F]|[I][f]|[i][f])\({CONDICION}\){BLOQUE}
+ELSE = ([E][L][S][E]|[E][l][s][e]|[e][l][s][e]){BLOQUE}
+
+WHILE = ([W][H][I][L][E]|[W][h][i][l][e]|[w][h][i][l][e])\({CONDICION}\){BLOQUE}
+
+PRINT = ([P][R][I][N][T]|[P][r][i][n][t]|[p][r][i][n][t]){CONST_STR}
+
+TAKE_HEAD = [T][A][K][E]|[T][a][k][e]|[t][a][k][e]
+TAKE = {TAKE_HEAD}\({OPERADORES}{ESPACIO}*";"{CONST_INT}{ESPACIO}*";"\[({CONST_INT}";")*\]\)
+
+
 DECLARE = [D][E][C][L][A][R]E]
-
-ASIGNACION = :=
-
-IF = ([I][F] | [I][f] | [i][f])
-ELSE = ([E][L][S][E] | [E][l][s][e] | [e][l][s][e])
-
-WHILE = ([W][H][I][L][E] | [W][h][i][l][e] | [w][h][i][l][e])
-
-PRINT = ([P][R][I][N][T] | [P][r][i][n][t] | [p][r][i][n][t])
-
-TAKE = [T][A][K][E]
-TAKE_CUERPO = \({OPERADORES};[1-9];\[({DIGITO};)*\]\)
-
 END_DECLARE = [E][N][D][D][E][C][L][A][R]E]
+
+LISTA_DEC = \[A\]
+
+DECLARACION = {DECLARE}{DECLARE_LEFT}":="{DECLARE_RIGHT}{END_DECLARE}
+
+BEGIN_PROGRAM = [B][E][G][I][N]{PUNTO}[P][R][O][G][R][A][M]
 END_PROGRAM = [E][N][D]{PUNTO}[P][R][O][G][R][A][M]
 
-COMENTARIO = "</"[^"</"]*"/>"
+PROGRAMA = {DECLARACION}{BEGIN_PROGRAM}{CONTENIDO}{END_PROGRAM}|{BEGIN_PROGRAM}{CONTENIDO}{END_PROGRAM}
 
 %%
 
 <YYINITIAL> {
-	{BEGIN_PROGRAM}	{anuncio("BEGIN.PROGRAM");iniTable();}
-	{END_PROGRAM}	{anuncio("END.PROGRAM");}
-	{DECLARE}		{anuncio("DECLARE");}
-	{ASIGNACION}	{anuncio("ASIGNACION");}
-	{END_DECLARE}	{anuncio("ENDDECLARE");}
+	
+	{ASIGNACION}			{anuncio("ASIGNACION");}
+	{BEGIN_PROGRAM}			{anuncio("BEGIN.PROGRAM");iniTable();}
+	{END_PROGRAM}			{anuncio("END.PROGRAM");}
+	
+	{DECLARE}				{anuncio("DECLARE");}
+	{END_DECLARE}			{anuncio("ENDDECLARE");}
 
-	{IF}			{anuncio("IF");}
-	{ELSE}			{anuncio("ELSE");}
+	{IF}					{anuncio("IF");}
+	{ELSE}					{anuncio("ELSE");}
 	
-	{WHILE}			{anuncio("WHILE");}
+	{WHILE}					{anuncio("WHILE");}
 	
-	{PRINT}			{anuncio("PRINT");}
+	{PRINT}					{anuncio("PRINT");}
 	
-	{TAKE}			{anuncio("TAKE");}
-	{TAKE_CUERPO}	{anuncio("TAKE_CUERPO");}
+	{TAKE}					{anuncio("TAKE");}
 	
-	{ID_VAR}		{anuncio("ID_VAR");}
+	{ID_VAR}				{anuncio("ID_VAR");}
 	
-					// Aseguro longitud valida
-	{CONST_INT}		{
-						if !(checkInt(yytext())){
-							System.out.println("Lexema " + yytext() + " excede el valor máximo de un Integer (" + INT_MAX_LEN + ").");	
-						}
-						else{
-							anuncio("CONST_INT");
-						}
-					}		
+							// Aseguro longitud valida
+	{CONST_INT}				{
+								if !(checkInt(yytext())){
+									System.out.println("Lexema " + yytext() + " excede el valor máximo de un Integer (" + INT_MAX_LEN + ").");	
+								}
+								else{
+									anuncio("CONST_INT");
+								}
+							}		
 					
-					// Aseguro longitud valida
-	{CONST_FLOAT}	{
-						if !(checkFloat(yytext())){
-							System.out.println("Lexema " + yytext() + " excede el valor máximo de un Float (" + FLOAT_MAX_LEN + ").");	
-						}
-						else{
-							anuncio("CONST_FLOAT");
-						}
-					}
+							// Aseguro longitud valida
+	{CONST_FLOAT}			{
+								if !(checkFloat(yytext())){
+									System.out.println("Lexema " + yytext() + " excede el valor máximo de un Float (" + FLOAT_MAX_LEN + ").");	
+								}
+								else{
+									anuncio("CONST_FLOAT");
+								}
+							}
 					
-					// Aseguro longitud valida
-	{CONST_STR}		{
-						if !(checkStr(yytext())){
-							System.out.println("Lexema " + yytext() + " excede la longitud maxima de un String (" + STR_MAX_LEN + ").");		
-						}
-						else{
-							anuncio("CONST_STR");
-						}
-					}
-	
-	{COMENTARIO}	{/* se ignora el contenido */}
-	{ESPACIO}		{/* no hacer nada */}
+							// Aseguro longitud valida
+	{CONST_STR}				{
+								if !(checkStr(yytext())){
+									System.out.println("Lexema " + yytext() + " excede la longitud maxima de un String (" + STR_MAX_LEN + ").");		
+								}
+								else{
+									anuncio("CONST_STR");
+								}
+							}
+			
+	{COMENTARIO}			{/* se ignora el contenido */}
+	{ESPACIO}				{/* no hacer nada */}
 }
 
 

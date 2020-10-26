@@ -6,9 +6,9 @@ ciclos y condicionales, operadores lógicos, nombres de tipos, etc. />
 
 
 DECLARE
-[suma, contador, d1] := [FLOAT, INT, FLOAT]
-[actual, contar, palabra] := [FLOAT, FLOAT, STRING]
-[var] := [INT]
+[suma, contador, d1] := [CONST_FLOAT, CONST_INT, CONST_FLOAT]
+[actual, contar, palabra] := [CONST_FLOAT, CONST_FLOAT, CONST_STRING]
+[var] := [CONST_INT]
 ENDDECLARE
 
 
