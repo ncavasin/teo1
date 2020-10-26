@@ -1,15 +1,18 @@
-import java_cup.runtime.Symbol;
-
-import TablaSimbolos.java;
-
+package compilador;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-%%
+import java_cup.runtime.*;
+//import java_cup.sym; 
 
+// Para escribir el archivo de la tabla de simbolos
+import compilador.TablaSimbolos.*;
+
+
+%%
 
 %cupsym Simbolo
 %cup
@@ -25,10 +28,10 @@ import java.util.Map;
 %{
 
 	// Valores maximos
-	private final int STR_MAX_LEN = 30
-	private final Integer INT_MAX_LEN = 65536		/* 2¹⁶*/
-	private final Float FLOAT_MAX_LEN = 4294967296 	/* 2³²*/
-	
+	private final int STR_MAX_LEN = 30;
+	/* 2¹⁶*/
+	private final int INT_MAX_LEN = 65536;	
+	private final float FLOAT_MAX_LEN = 0;
 	
 	// Tabla de símbolos
 	private List<Map<Columna, String>> symtbl;
@@ -80,17 +83,17 @@ import java.util.Map;
 	}
 	
 	
-	// Verifica la cantidad de bits del integer (recibido como string)
+	// Verifica la cantidad de bits del integer (0-65535) (recibido como string)
 	public boolean checkInt(String s){
-		// Verifico que s no este vacia
-		if (s.isEmpty()){
+		// Verifico que s no este vacia o tenga más de 5 digitos
+		if (s.isEmpty() || s.length() > 5){
 			return false;
 		}
 		try{
 			// Parseo a integer
-			Integer number = Integer.valueOf(s)
+			Integer number = Integer.valueOf(s);
 			// Verifico que no exceda el maximo valor
-			if (number > INT_MAX_VALUE){
+			if (number > INT_MAX_LEN){
 				return false;
 			}
 		}catch(Exception e){
@@ -103,16 +106,16 @@ import java.util.Map;
 	
 
 	// Verifica la cantidad de bits del float (recibido como string)
-	public booolean checkFloat(String s){
+	public boolean checkFloat(String s){
 		// Verifico que s no este vacia
 		if (s.isEmpty()){
 			return false;
 		}
 		try{
 			// Parseo a float
-			Float number = Float.valueOf(s)
+			Float number = Float.valueOf(s);
 			// Verifico que no exceda el maximo valor
-			if (number > FLOAT_MAX_VALUE){
+			if (number > FLOAT_MAX_LEN){
 				return false;
 			}
 		}catch(Exception e){
@@ -135,7 +138,7 @@ import java.util.Map;
 	
 	// Imprime cada par token:lexema hallado
 	public void anuncio(String token){
-		System.out.println("***Nuevo hallazgo***")
+		System.out.println("***Nuevo hallazgo***");
 		System.out.println("\tToken = " + token + ".\n\tLexema = " + yytext() + ".\n");
 	}
 	
@@ -158,6 +161,9 @@ COMILLA = \"
 
 CONST_INT = 0 | [1-9]{DIGITO}+
 CONST_FLOAT = {DIGITO}*{PUNTO}{DIGITO}+ | {DIGITO}+{PUNTO}{DIGITO}*
+
+CONST_FLOAT = ({DIGITO}+{PUNTO}{DIGITO}+){1,30} | {PUNTO}{DIGITO}{1,30} | {DIGITO}{1,32}{PUNTO}
+
 CONST_STR = {COMILLA}{CHAR}*{COMILLA}
 
 ID = {LETRA}({LETRA}|{DIGITO}|\_)*
@@ -199,7 +205,7 @@ COMENTARIO = "</"[^"</"]*"/>"
 	{ID}				{anuncio("ID"); addSym(yytext(), "ID", null);}
 	
 	{CONST_INT}			{
-							if !(checkInt(yytext())){
+							if (!checkInt(yytext())){
 								System.out.println("Lexema " + yytext() + " excede el valor máximo de un Integer (" + INT_MAX_LEN + ").");	
 							}
 							else{
@@ -211,7 +217,7 @@ COMENTARIO = "</"[^"</"]*"/>"
 						}
 					
 	{CONST_FLOAT}		{
-							if !(checkFloat(yytext())){
+							if (!checkFloat(yytext())){
 								System.out.println("Lexema " + yytext() + " excede el valor máximo de un Float (" + FLOAT_MAX_LEN + ").");	
 							}
 							else{
@@ -223,7 +229,7 @@ COMENTARIO = "</"[^"</"]*"/>"
 						}
 						
 	{CONST_STR}			{
-							if !(checkStr(yytext())){
+							if (!checkStr(yytext())){
 								System.out.println("Lexema " + yytext() + " excede la longitud maxima de un String (" + STR_MAX_LEN + ").");		
 							}
 							else{
