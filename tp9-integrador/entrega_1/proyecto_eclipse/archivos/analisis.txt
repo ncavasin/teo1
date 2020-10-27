@@ -1,0 +1,724 @@
+***Nuevo hallazgo***
+	Token = COR_ABRE
+	Lexema = '['
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'suma'
+
+***Nuevo hallazgo***
+	Token = COMA
+	Lexema = ','
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'contador'
+
+***Nuevo hallazgo***
+	Token = COMA
+	Lexema = ','
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'd1'
+
+***Nuevo hallazgo***
+	Token = COR_CIERRA
+	Lexema = ']'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = COR_ABRE
+	Lexema = '['
+
+***Nuevo hallazgo***
+	Token = TIPO_DATO
+	Lexema = 'FLOAT'
+
+***Nuevo hallazgo***
+	Token = COMA
+	Lexema = ','
+
+***Nuevo hallazgo***
+	Token = TIPO_DATO
+	Lexema = 'INT'
+
+***Nuevo hallazgo***
+	Token = COMA
+	Lexema = ','
+
+***Nuevo hallazgo***
+	Token = TIPO_DATO
+	Lexema = 'FLOAT'
+
+***Nuevo hallazgo***
+	Token = COR_CIERRA
+	Lexema = ']'
+
+***Nuevo hallazgo***
+	Token = COR_ABRE
+	Lexema = '['
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'actual'
+
+***Nuevo hallazgo***
+	Token = COMA
+	Lexema = ','
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'contar'
+
+***Nuevo hallazgo***
+	Token = COMA
+	Lexema = ','
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'palabra'
+
+***Nuevo hallazgo***
+	Token = COR_CIERRA
+	Lexema = ']'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = COR_ABRE
+	Lexema = '['
+
+***Nuevo hallazgo***
+	Token = TIPO_DATO
+	Lexema = 'FLOAT'
+
+***Nuevo hallazgo***
+	Token = COMA
+	Lexema = ','
+
+***Nuevo hallazgo***
+	Token = TIPO_DATO
+	Lexema = 'FLOAT'
+
+***Nuevo hallazgo***
+	Token = COMA
+	Lexema = ','
+
+***Nuevo hallazgo***
+	Token = TIPO_DATO
+	Lexema = 'STRING'
+
+***Nuevo hallazgo***
+	Token = COR_CIERRA
+	Lexema = ']'
+
+***Nuevo hallazgo***
+	Token = COR_ABRE
+	Lexema = '['
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'var'
+
+***Nuevo hallazgo***
+	Token = COR_CIERRA
+	Lexema = ']'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = COR_ABRE
+	Lexema = '['
+
+***Nuevo hallazgo***
+	Token = TIPO_DATO
+	Lexema = 'INT'
+
+***Nuevo hallazgo***
+	Token = COR_CIERRA
+	Lexema = ']'
+
+***Nuevo hallazgo***
+	Token = ENDDECLARE
+	Lexema = 'ENDDECLARE'
+
+***Nuevo hallazgo***
+	Token = BEGIN.PROGRAM
+	Lexema = 'BEGIN.PROGRAM'
+
+***Nuevo hallazgo***
+	Token = PRINT
+	Lexema = 'PRINT'
+
+***Nuevo hallazgo***
+	Token = CONST_STR
+	Lexema = '"Prueba.txt Analizador Lexico!"'
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'contador'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '0'
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'suma'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = CONST_FLOAT
+	Lexema = '7.5'
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'contar'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = CONST_FLOAT
+	Lexema = '18.22'
+
+***Nuevo hallazgo***
+	Token = WHILE
+	Lexema = 'while'
+
+***Nuevo hallazgo***
+	Token = PAR_ABRE
+	Lexema = '('
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'contador'
+
+***Nuevo hallazgo***
+	Token = MENOR_IGUAL
+	Lexema = '<='
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '92'
+
+***Nuevo hallazgo***
+	Token = PAR_CIERRA
+	Lexema = ')'
+
+***Nuevo hallazgo***
+	Token = LLAVE_ABRE
+	Lexema = '{'
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'contador'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'contador'
+
+***Nuevo hallazgo***
+	Token = SUMA
+	Lexema = '+'
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '1'
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'actual'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = PAR_ABRE
+	Lexema = '('
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'contador'
+
+***Nuevo hallazgo***
+	Token = DIVIDE
+	Lexema = '/'
+
+***Nuevo hallazgo***
+	Token = CONST_FLOAT
+	Lexema = '0.342'
+
+***Nuevo hallazgo***
+	Token = PAR_CIERRA
+	Lexema = ')'
+
+***Nuevo hallazgo***
+	Token = SUMA
+	Lexema = '+'
+
+***Nuevo hallazgo***
+	Token = PAR_ABRE
+	Lexema = '('
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'contador'
+
+***Nuevo hallazgo***
+	Token = MULTIPLICA
+	Lexema = '*'
+
+***Nuevo hallazgo***
+	Token = PAR_ABRE
+	Lexema = '('
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'contar'
+
+***Nuevo hallazgo***
+	Token = SUMA
+	Lexema = '+'
+
+***Nuevo hallazgo***
+	Token = CONST_FLOAT
+	Lexema = '4.67'
+
+***Nuevo hallazgo***
+	Token = PAR_CIERRA
+	Lexema = ')'
+
+***Nuevo hallazgo***
+	Token = PAR_CIERRA
+	Lexema = ')'
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'suma'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'suma'
+
+***Nuevo hallazgo***
+	Token = SUMA
+	Lexema = '+'
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'actual'
+
+***Nuevo hallazgo***
+	Token = LLAVE_CIERRA
+	Lexema = '}'
+
+***Nuevo hallazgo***
+	Token = PRINT
+	Lexema = 'PRINT'
+
+***Nuevo hallazgo***
+	Token = CONST_STR
+	Lexema = '"La variable suma es de tipo float"'
+
+***Nuevo hallazgo***
+	Token = IF
+	Lexema = 'If'
+
+***Nuevo hallazgo***
+	Token = PAR_ABRE
+	Lexema = '('
+
+***Nuevo hallazgo***
+	Token = PAR_ABRE
+	Lexema = '('
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'actual'
+
+***Nuevo hallazgo***
+	Token = MAYOR
+	Lexema = '>'
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '2'
+
+***Nuevo hallazgo***
+	Token = PAR_CIERRA
+	Lexema = ')'
+
+***Nuevo hallazgo***
+	Token = AND
+	Lexema = '&&'
+
+***Nuevo hallazgo***
+	Token = PAR_ABRE
+	Lexema = '('
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'actual'
+
+***Nuevo hallazgo***
+	Token = DISTINTO
+	Lexema = '<>'
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '0'
+
+***Nuevo hallazgo***
+	Token = PAR_CIERRA
+	Lexema = ')'
+
+***Nuevo hallazgo***
+	Token = PAR_CIERRA
+	Lexema = ')'
+
+***Nuevo hallazgo***
+	Token = LLAVE_ABRE
+	Lexema = '{'
+
+***Nuevo hallazgo***
+	Token = PRINT
+	Lexema = 'PRINT'
+
+***Nuevo hallazgo***
+	Token = CONST_STR
+	Lexema = '"actual es mayor que 2 y distinto de cero"'
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'palabra'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = CONST_STR
+	Lexema = '"es mayor"'
+
+***Nuevo hallazgo***
+	Token = LLAVE_CIERRA
+	Lexema = '}'
+
+***Nuevo hallazgo***
+	Token = ELSE
+	Lexema = 'Else'
+
+***Nuevo hallazgo***
+	Token = LLAVE_ABRE
+	Lexema = '{'
+
+***Nuevo hallazgo***
+	Token = PRINT
+	Lexema = 'PRINT'
+
+***Nuevo hallazgo***
+	Token = CONST_STR
+	Lexema = '"no es mayor que 2"'
+
+***Nuevo hallazgo***
+	Token = LLAVE_CIERRA
+	Lexema = '}'
+
+***Nuevo hallazgo***
+	Token = COMENTARIO
+	Lexema = '</ TAKE Grupo 2, eliminar si no es tu tema especial />'
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'contador'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = TAKE
+	Lexema = 'TAKE'
+
+***Nuevo hallazgo***
+	Token = PAR_ABRE
+	Lexema = '('
+
+***Nuevo hallazgo***
+	Token = SUMA
+	Lexema = '+'
+
+***Nuevo hallazgo***
+	Token = PUNTO_COMA
+	Lexema = ';'
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '2'
+
+***Nuevo hallazgo***
+	Token = PUNTO_COMA
+	Lexema = ';'
+
+***Nuevo hallazgo***
+	Token = COR_ABRE
+	Lexema = '['
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '2'
+
+***Nuevo hallazgo***
+	Token = PUNTO_COMA
+	Lexema = ';'
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '12'
+
+***Nuevo hallazgo***
+	Token = PUNTO_COMA
+	Lexema = ';'
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '24'
+
+***Nuevo hallazgo***
+	Token = PUNTO_COMA
+	Lexema = ';'
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '48'
+
+***Nuevo hallazgo***
+	Token = COR_CIERRA
+	Lexema = ']'
+
+***Nuevo hallazgo***
+	Token = PAR_CIERRA
+	Lexema = ')'
+
+***Nuevo hallazgo***
+	Token = ID_VAR
+	Lexema = 'var'
+
+***Nuevo hallazgo***
+	Token = ASIGNA
+	Lexema = '='
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '56'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = TAKE
+	Lexema = 'TAKE'
+
+***Nuevo hallazgo***
+	Token = PAR_ABRE
+	Lexema = '('
+
+***Nuevo hallazgo***
+	Token = DIVIDE
+	Lexema = '/'
+
+***Nuevo hallazgo***
+	Token = PUNTO_COMA
+	Lexema = ';'
+
+***Nuevo hallazgo***
+	Token = CONST_INT
+	Lexema = '4'
+
+***Nuevo hallazgo***
+	Token = PUNTO_COMA
+	Lexema = ';'
+
+***Nuevo hallazgo***
+	Token = COR_ABRE
+	Lexema = '['
+
+***Nuevo hallazgo***
+	Token = COR_CIERRA
+	Lexema = ']'
+
+***Nuevo hallazgo***
+	Token = PAR_CIERRA
+	Lexema = ')'
+
+***Nuevo hallazgo***
+	Token = MENOR
+	Lexema = '<'
+
+***Nuevo hallazgo***
+	Token = DIVIDE
+	Lexema = '/'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = COMENTARIO
+	Lexema = '</----------------/>'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = RESTA
+	Lexema = '-'
+
+***Nuevo hallazgo***
+	Token = DIVIDE
+	Lexema = '/'
+
+***Nuevo hallazgo***
+	Token = MAYOR
+	Lexema = '>'
+
+***Nuevo hallazgo***
+	Token = END.PROGRAM
+	Lexema = 'END.PROGRAM'
+

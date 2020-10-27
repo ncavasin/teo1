@@ -1,0 +1,20 @@
+|                         NOMBRE|          TOKEN|           TIPO|                          VALOR|       LEN|
+-------------------------------------------------------------------------------------------------------------
+|                           suma|         ID_VAR|               |                               |          |
+|                       contador|         ID_VAR|               |                               |          |
+|                             d1|         ID_VAR|               |                               |          |
+|                         actual|         ID_VAR|               |                               |          |
+|                         contar|         ID_VAR|               |                               |          |
+|                        palabra|         ID_VAR|               |                               |          |
+|                            var|         ID_VAR|               |                               |          |
+|                             _0|      CONST_INT|               |                              0|          |
+|                            _92|      CONST_INT|               |                             92|          |
+|                             _1|      CONST_INT|               |                              1|          |
+|                             _2|      CONST_INT|               |                              2|          |
+|                    _"es mayor"|      CONST_STR|               |                     "es mayor"|        10|
+|           _"no es mayor que 2"|      CONST_STR|               |            "no es mayor que 2"|        19|
+|                            _12|      CONST_INT|               |                             12|          |
+|                            _24|      CONST_INT|               |                             24|          |
+|                            _48|      CONST_INT|               |                             48|          |
+|                            _56|      CONST_INT|               |                             56|          |
+|                             _4|      CONST_INT|               |                              4|          |
