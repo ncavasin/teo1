@@ -417,9 +417,11 @@ public class Lexico implements java_cup.runtime.Scanner {
 	private void iniTable() {
 		TablaSimbolos.escribirArchivo(null, null, false);
 		this.symtbl = TablaSimbolos.leerArchivo(null);
+		EscribeAnalisis.escribir("", false);
 	}
 	
 	
+
 	// Agrega un simbolo de ID de variable
 	public void addSym(String nombre, String token, String tipo) {
 		boolean encontrado = false;
@@ -501,6 +503,7 @@ public class Lexico implements java_cup.runtime.Scanner {
 		}
 		return true;
 	}
+
 	
 	
 	// Verifica que el string no tenga mas de 30 caracteres
@@ -516,6 +519,8 @@ public class Lexico implements java_cup.runtime.Scanner {
 	public void anuncio(String token){
 		System.out.println("***Nuevo hallazgo***");
 		System.out.println("\tToken = " + token + "\n\tLexema = '" + yytext() + "'\n");
+		EscribeAnalisis.escribir("***Nuevo hallazgo***", true);
+		EscribeAnalisis.escribir("\tToken = " + token + "\n\tLexema = '" + yytext() + "'\n", true);
 	}
 	
 

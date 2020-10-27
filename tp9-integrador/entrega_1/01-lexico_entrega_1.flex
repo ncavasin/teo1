@@ -5,16 +5,13 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-import java_cup.runtime.*;
-//import java_cup.sym; 
 
 // Para escribir el archivo de la tabla de simbolos
 import compilador.TablaSimbolos.*;
-
+import java_cup.runtime.*;
 
 %%
 
-%cupsym Simbolo
 %cup
 %public
 %class Lexico
@@ -29,8 +26,9 @@ import compilador.TablaSimbolos.*;
 
 	// Valores maximos
 	private final int STR_MAX_LEN = 30;
-	/* 2¹⁶*/
+	/* 2¹⁶ */
 	private final int INT_MAX_LEN = 65536;	
+	/* 2³² */
 	private final float FLOAT_MAX_LEN = 0;
 	
 	// Tabla de símbolos
@@ -41,9 +39,11 @@ import compilador.TablaSimbolos.*;
 	private void iniTable() {
 		TablaSimbolos.escribirArchivo(null, null, false);
 		this.symtbl = TablaSimbolos.leerArchivo(null);
+		EscribeAnalisis.escribir("", false);
 	}
 	
 	
+
 	// Agrega un simbolo de ID de variable
 	public void addSym(String nombre, String token, String tipo) {
 		boolean encontrado = false;
@@ -125,6 +125,7 @@ import compilador.TablaSimbolos.*;
 		}
 		return true;
 	}
+
 	
 	
 	// Verifica que el string no tenga mas de 30 caracteres
@@ -139,7 +140,9 @@ import compilador.TablaSimbolos.*;
 	// Imprime cada par token:lexema hallado
 	public void anuncio(String token){
 		System.out.println("***Nuevo hallazgo***");
-		System.out.println("\tToken = " + token + ".\n\tLexema = " + yytext() + ".\n");
+		System.out.println("\tToken = " + token + "\n\tLexema = '" + yytext() + "'\n");
+		EscribeAnalisis.escribir("***Nuevo hallazgo***", true);
+		EscribeAnalisis.escribir("\tToken = " + token + "\n\tLexema = '" + yytext() + "'\n", true);
 	}
 	
 %}
@@ -149,98 +152,107 @@ import compilador.TablaSimbolos.*;
 
 
 FIN_LINEA = \r|\n|\r\n
-ESPACIO = {FIN_LINEA}|\t|\f
+ESPACIO = {FIN_LINEA}|\t|\f|[ ]
 
 DIGITO = [0-9]
 LETRA = [a-zA-Z]
 PUNTO = "."
-
-CHAR = {DIGITO}|{LETRA}|{ESPACIO}
-
 COMILLA = \"
 
-CONST_INT = 0 | [1-9]{DIGITO}+
+
+CONST_INT = {DIGITO}|{DIGITO}+
 CONST_FLOAT = {DIGITO}*{PUNTO}{DIGITO}+ | {DIGITO}+{PUNTO}{DIGITO}*
+CONST_STR = {COMILLA} [^\"]* {COMILLA} | \' [^\']* \'
 
-CONST_FLOAT = ({DIGITO}+{PUNTO}{DIGITO}+){1,30} | {PUNTO}{DIGITO}{1,30} | {DIGITO}{1,32}{PUNTO}
+INT = [I][N][T]|[I][n][t]|[i][n][t]
+FLOAT = [F][L][O][A][T]|[F][l][o][a][t]|[f][l][o][a][t]
+STRING =  [S][T][R][I][N][G]|[S][t][r][i][n][g]|[s][t][r][i][n][g]
 
-CONST_STR = {COMILLA}{CHAR}*{COMILLA}
+TIPO_DATO = {INT}|{FLOAT}|{STRING}
 
-ID = {LETRA}({LETRA}|{DIGITO}|\_)*
+IF = [I][F]|[I][f]|[i][f]
+ELSE = [E][L][S][E]|[E][l][s][e]|[e][l][s][e]
 
-COMENTARIO = "</"[^"</"]*"/>"
+WHILE = [W][H][I][L][E]|[W][h][i][l][e]|[w][h][i][l][e]
+
+PRINT = [P][R][I][N][T]|[P][r][i][n][t]|[p][r][i][n][t]
+
+TAKE = [T][A][K][E]|[T][a][k][e]|[t][a][k][e]
+
+COMEN_ABRE = \<\/
+COMEN_CIERRA = \/\>
+COMENTARIO = {COMEN_ABRE}[^(\/>)]*{COMEN_CIERRA}
+
+ID_VAR = {LETRA}({LETRA}|{DIGITO}|\_)*
 
 %%
 
 <YYINITIAL> {
-    "BEGIN.PROGRAM"		{anuncio("BEGIN.PROGRAM");return new Symbol(Simbolo.BEGIN_PROGRAM, yycolumn, yyline);}
-    "END.PROGRAM"		{anuncio("END.PROGRAM");return new Symbol(Simbolo.END_PROGRAM, yycolumn, yyline);}
-    "DECLARE"           {anuncio("DECLARE");iniTable(); return new Symbol(Simbolo.DECLARE, yycolumn, yyline);}
-    "ENDDECLARE"		{anuncio("ENDDECLARE");return new Symbol(Simbolo.ENDDECLARE, yycolumn, yyline);}
-    "TAKE"				{anuncio("TAKE");return new Symbol(Simbolo.TAKE, yycolumn, yyline);}
-    "PRINT"             {anuncio("PRINT");return new Symbol(Simbolo.PRINT, yycolumn, yyline);}
-    "IF"                {anuncio("IF");return new Symbol(Simbolo.IF, yycolumn, yyline);}
-    "ELSE"              {anuncio("ELSE");return new Symbol(Simbolo.ELSE, yycolumn, yyline);}
-    "WHILE"             {anuncio("WHILE");return new Symbol(Simbolo.WHILE, yycolumn, yyline);}
-	":="                {anuncio(":=");return new Symbol(Simbolo.ASIGNA, yycolumn, yyline);}
-    "=="                {anuncio("==");return new Symbol(Simbolo.IGUAL, yycolumn, yyline, new String(yytext()));}
-    "<>"                {anuncio("<>");return new Symbol(Simbolo.DISTINTO, yycolumn, yyline, new String(yytext()));} 
-    "<"                 {anuncio("<");return new Symbol(Simbolo.MENOR, yycolumn, yyline, new String(yytext()));}
-    "<="                {anuncio("<=");return new Symbol(Simbolo.MENOR_IGUAL, yycolumn, yyline, new String(yytext()));}
-    ">"                 {anuncio(">");return new Symbol(Simbolo.MAYOR, yycolumn, yyline, new String(yytext()));}
-    ">="                {anuncio(">=");return new Symbol(Simbolo.MAYOR_IGUAL, yycolumn, yyline, new String(yytext()));}
-    "+"                 {anuncio("+");return new Symbol(Simbolo.SUMA, yycolumn, yyline, new String(yytext()));}
-    "-"                 {anuncio("-");return new Symbol(Simbolo.RESTA, yycolumn, yyline, new String(yytext()));}
-    "/"                 {anuncio("/");return new Symbol(Simbolo.DIVIDE, yycolumn, yyline, new String(yytext()));}
-    "*"                 {anuncio("*");return new Symbol(Simbolo.MULTIPLICA, yycolumn, yyline, new String(yytext()));}
-    "("                 {anuncio("(");return new Symbol(Simbolo.PAR_ABRE, yycolumn, yyline);}
-	")"                 {anuncio(")");return new Symbol(Simbolo.PAR_CIERRA, yycolumn, yyline);}
-    "{"                 {anuncio("{");return new Symbol(Simbolo.LLAVE_ABRE, yycolumn, yyline);}
-    "}"                 {anuncio("}");return new Symbol(Simbolo.LLAVE_CIERRA, yycolumn, yyline);}  
-    "["                 {anuncio("[");return new Symbol(Simbolo.COR_ABRE, yycolumn, yyline);}  
-    "]"                 {anuncio("]");return new Symbol(Simbolo.COR_CIERRA, yycolumn, yyline);}  
-    ";"                 {anuncio(";");return new Symbol(Simbolo.PUNTO_COMA, yycolumn, yyline);}
-    ","                 {anuncio(",");return new Symbol(Simbolo.COMA, yycolumn, yyline);}
-
-	{ID}				{anuncio("ID"); addSym(yytext(), "ID", null);}
+    "BEGIN.PROGRAM"		{anuncio("BEGIN.PROGRAM");}
+    "END.PROGRAM"		{anuncio("END.PROGRAM");}
+    "DECLARE"           {anuncio("DECLARE");iniTable();}
+    "ENDDECLARE"		{anuncio("ENDDECLARE");}
+    {TAKE}				{anuncio("TAKE");}
+    {PRINT}             {anuncio("PRINT");}
+    {IF}                {anuncio("IF");}
+    {ELSE}              {anuncio("ELSE");}
+    {WHILE}             {anuncio("WHILE");}
+    {TIPO_DATO}			{anuncio("TIPO_DATO");}
+	"="                	{anuncio("ASIGNA");}
+    "=="                {anuncio("IGUAL");}
+    "<>"                {anuncio("DISTINTO");} 
+    "<"	                {anuncio("MENOR");}
+    "<="                {anuncio("MENOR_IGUAL");}
+    ">"                 {anuncio("MAYOR");}
+    ">="                {anuncio("MAYOR_IGUAL");}
+    "&&"				{anuncio("AND");}
+    "||"				{anuncio("OR");}
+    "+"                 {anuncio("SUMA");}
+    "-"		            {anuncio("RESTA");}
+    "/"                 {anuncio("DIVIDE");}
+    "*"                 {anuncio("MULTIPLICA");}
+    "("                 {anuncio("PAR_ABRE");}
+	")"                 {anuncio("PAR_CIERRA");}
+    "{"                 {anuncio("LLAVE_ABRE");}
+    "}"                 {anuncio("LLAVE_CIERRA");}  
+    "["                 {anuncio("COR_ABRE");}  
+    "]"                 {anuncio("COR_CIERRA");}  
+    ";"                 {anuncio("PUNTO_COMA");}
+    ","                 {anuncio("COMA");}
+    
+	{ID_VAR}			{anuncio("ID_VAR"); addSym(yytext(), "ID_VAR", null);}
 	
 	{CONST_INT}			{
+							anuncio("CONST_INT");					
 							if (!checkInt(yytext())){
-								System.out.println("Lexema " + yytext() + " excede el valor máximo de un Integer (" + INT_MAX_LEN + ").");	
+								System.out.println("Lexema " + yytext() + " excede el valor maximo de un Integer (" + INT_MAX_LEN + ").\n");	
 							}
 							else{
-								anuncio("CONST_INT");
+								addSym("_" + yytext(), "CONST_INT", yytext(), null);
 							}
-							anuncio("CONST_INT");
-							addSym("_" + yytext(), "CONST_INT", yytext(), null);
-                            return new Symbol(Simbolo.CONST_INT, yycolumn, yyline, new String(yytext()));
 						}
 					
 	{CONST_FLOAT}		{
+							anuncio("CONST_FLOAT");
 							if (!checkFloat(yytext())){
-								System.out.println("Lexema " + yytext() + " excede el valor máximo de un Float (" + FLOAT_MAX_LEN + ").");	
+								System.out.println("Lexema " + yytext() + " excede el valor maximo de un Float (" + FLOAT_MAX_LEN + ").\n");	
 							}
 							else{
-								anuncio("CONST_FLOAT");
+								addSym("_" + yytext(), "CONST_FLOAT", yytext(), null);
 							}
-							anuncio("CONST_FLOAT");
-							addSym("_" + yytext(), "CONST_FLOAT", yytext(), null);
-                            return new Symbol(Simbolo.CONST_FLOAT, yycolumn, yyline, new String(yytext()));
 						}
 						
 	{CONST_STR}			{
+							anuncio("CONST_STR");
 							if (!checkStr(yytext())){
-								System.out.println("Lexema " + yytext() + " excede la longitud maxima de un String (" + STR_MAX_LEN + ").");		
+								System.out.println("Lexema " + yytext() + " excede la longitud maxima de un String (" + STR_MAX_LEN + ").\n");		
 							}
 							else{
-								anuncio("CONST_STR");
+								addSym("_" + yytext(), "CONST_STR", yytext(), yytext().length());
 							}
-							anuncio("CONST_STR");
-							addSym("_" + yytext(), "CONST_STR", yytext(), null);
-                            return new Symbol(Simbolo.CONST_STR, yycolumn, yyline, new String(yytext()));
 						}
 	
-	{COMENTARIO}		{/* se ignora el contenido */}
+	{COMENTARIO}		{anuncio("COMENTARIO");}
 	{ESPACIO}			{/* no hacer nada */}
 }
 
@@ -248,13 +260,6 @@ COMENTARIO = "</"[^"</"]*"/>"
 [^]	{ 
 	throw new Error("Caracter no permitido: <" + yytext() + "> en la linea " + yyline + " columna " + yycolumn + "."); 
 }
-
-
-
-
-
-
-
 
 
 
