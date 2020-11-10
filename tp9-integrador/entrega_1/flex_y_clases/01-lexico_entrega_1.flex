@@ -181,7 +181,7 @@ TAKE = [T][A][K][E]|[T][a][k][e]|[t][a][k][e]
 
 COMEN_ABRE = \<\/
 COMEN_CIERRA = \/\>
-COMENTARIO = {COMEN_ABRE}[^(\/>)]*{COMEN_CIERRA}
+COMENTARIO = {COMEN_ABRE}[^(\/>)]*{COMEN_CIERRA}|{COMEN_ABRE}{COMEN_CIERRA}
 
 ID_VAR = {LETRA}({LETRA}|{DIGITO}|\_)*
 
