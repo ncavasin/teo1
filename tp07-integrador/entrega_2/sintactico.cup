@@ -1,0 +1,493 @@
+
+package compilador;
+
+import java_cup.runtime.*;
+import compilador.TablaSimbolos;
+import compilador.TablaSimbolos.Columna;
+
+import java_cup.runtime.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
+
+parser code
+{:
+	/**
+	 * Metodo al que se llama automaticamente ante algun error sintactico.
+	 */
+    public void syntax_error(Symbol s) {
+        System.out.println("### Error en la linea " + (s.right+1) + " columna " + s.left + ". Simbolo " + s + " no reconocido. Valor '" + s.value+ "'.");
+    }
+  
+:}
+
+
+action code
+{: 
+	private void actualizarTablaSimbolos(Map<String, Deque> map) {
+		Deque<String> colaTipos = map.get(COLA_TIPOS);
+		Deque<String> pilaVariables = map.get(PILA_VARIABLES);
+			
+		Map<String, String> declaraciones = new HashMap<String, String>();
+		while (!pilaVariables.isEmpty()) {
+			declaraciones.put(pilaVariables.pop(), colaTipos.remove());
+		}
+
+		List<Map<Columna, String>> lineas = TablaSimbolos.leerArchivo(null);
+
+		int i = 0;
+		while (i < lineas.size() && declaraciones.size() > 0) {
+			Map<Columna, String> linea = lineas.get(i);
+			if (linea.get(Columna.TOKEN).equals("ID")) {
+				String nombre = linea.get(Columna.NOMBRE);
+				if (declaraciones.containsKey(nombre)) {
+					lineas.get(i).put(Columna.TIPO, declaraciones.get(nombre));
+					declaraciones.remove(nombre);
+				}
+			}
+			i++;
+		}
+		
+		TablaSimbolos.escribirArchivo(lineas, null, false);
+	}
+
+	// Usadas para el mapeo de pares de declaraciones
+	private final String PILA_VARIABLES = "PILA_VARIABLES";
+	private final String COLA_TIPOS = "COLA_TIPOS";
+
+
+	// Limpia strings
+	public String limpiarString(String s) {
+		if (s.length() >= 2 && s.charAt(0) == '"' && s.charAt(s.length() - 1) == '"'){
+			s = s.substring(1, s.length() - 1);
+		}
+		return s;
+	}
+	
+	// Para escribir el analisis
+//  	private EscribeAnalisis e = new EscribeAnalisis("analisis_gramatico.txt");
+  	File file = new File("analisis_gramatico.txt");
+  	 PrintStream stream = new PrintStream(file);
+  	 System.setOut(stream);
+
+:}
+
+
+terminal BEGIN_PROGRAM, END_PROGRAM, DECLARE, ENDDECLARE, ASIGNA;
+
+terminal PAR_ABRE, PAR_CIERRA, LLAVE_ABRE, LLAVE_CIERRA, COR_ABRE, COR_CIERRA, COMA, PUNTO_COMA;
+
+terminal PRINT, TAKE, IF, ELSE, WHILE;
+
+terminal String ID, CTE_STRING, CTE_INT, CTE_FLOAT;
+terminal String FLOAT, INT, STRING;
+terminal String IGUAL, DISTINTO, MENOR, MENOR_IGUAL, MAYOR, MAYOR_IGUAL, AND, OR;
+terminal String SUMA, RESTA, DIVIDE, MULTIPLICA;
+
+
+
+non terminal programa;
+
+non terminal declaraciones, lista_declaraciones, linea_declaracion;
+non terminal Map<String, Deque> declaracion;
+non terminal String tipo;
+non terminal String lista_sentencias,  sentencia, asignacion;
+non terminal bloque;
+non terminal expresion, termino, factor, funcion_take; 
+
+non terminal String funcion_print, funcion_if, funcion_while, lista_take;
+non terminal condicion;
+non terminal String op_logico, op_num, op_bin;
+
+// ========================================================================================================================
+
+start with programa;
+
+
+programa ::= declaraciones BEGIN_PROGRAM lista_sentencias END_PROGRAM
+			{: 
+				System.out.println("[Regla 00] - <programa> - COMPILACION EXITOSA!");
+			 :};
+
+// ========================================================================================================================
+
+declaraciones ::= DECLARE lista_declaraciones ENDDECLARE 
+				{: 	System.out.println("[Regla 01] - <declaraciones> - Se encontro DECLARE <lista_declaraciones> ENDDECLARE"); :};
+
+
+lista_declaraciones ::= lista_declaraciones linea_declaracion:ld 
+						{: 
+							System.out.println("[Regla 02] - Se encontro <lista_declaraciones><linea_declaracion>");
+						 :}
+						| linea_declaracion
+						{: 						
+							System.out.println("[Regla 03] - Se completo una <linea_declaracion>");
+						:};
+							
+							
+linea_declaracion ::= COR_ABRE declaracion:p COR_CIERRA
+					{: 
+						// Recibo en d el diccionario resultante con las variables y sus tipos
+						// y actualizo la tabla de simbolos de manera acorde
+						actualizarTablaSimbolos(p);
+						System.out.println("[Regla 04] - <linea_declaracion> '[" + p.toString() + "]'");
+					:};
+
+
+// Por cada id apilo y por cada tipo encolo 
+declaracion ::=  ID:id COMA declaracion:p COMA tipo:t
+				{:
+					/* 
+					 * Como este es el caso recursivo, las estructuras a usar van a ser creadas 
+					 * cuando se llegue al caso embrionario.
+					*/
+					
+					// Recupero cada estructura del diccionario y apilo y encolo respectivamente
+					p.get(PILA_VARIABLES).push(id);
+					p.get(COLA_TIPOS).add(t);
+					RESULT = p;
+										
+					System.out.println("[Regla 05] - <declaracion> - Se encontro '" +id + ", <declaracion>, "+t+"'");
+				:}
+				| ID:id COR_CIERRA ASIGNA COR_ABRE tipo:t
+				{: 
+					/*
+					 * Como este es el caso embrionario, aca se crean
+					 * tanto el diccionario como la pila y la cola.
+					*/
+					
+					// Diccionario que almacena pares de estructuras de datos {pilaIds}:{colaTipos}
+					Map<String, Deque> m = new HashMap<String, Deque>();
+					
+					// Pila de variables que se recupera LIFO
+					Deque<String> pilaVariables = new ArrayDeque<String>();
+					
+					// Cola de tipos que se recupera FIFO
+					Deque<String> colaTipos = new ArrayDeque<String>();
+					
+					// Agrego cada dato a su respectiva estructura
+					pilaVariables.push(id);
+					colaTipos.add(t);
+	
+					// Pongo cada estructura en el mapa
+					m.put(PILA_VARIABLES, pilaVariables);
+					m.put(COLA_TIPOS, colaTipos);
+					
+					RESULT = m;
+					System.out.println("[Regla 06] - <declaracion> - Se encontro '"+ id + "] = ["+t+"'");
+				:};
+
+
+// Terminales que devuelven el valor reconocido por el lexer
+tipo ::= INT:t
+		{: 
+			RESULT = t;
+			System.out.println("[Regla 07] - <tipo> - Se encontro el tipo '"+t+"'");
+		:}
+		| FLOAT:t
+		{:
+			RESULT = t;
+			System.out.println("[Regla 08] - <tipo> - Se encontro el tipo '"+t+"'");
+		:}
+		| STRING:t
+		{:
+			RESULT = t;
+			System.out.println("[Regla 09] - <tipo> - Se encontro el tipo '"+t+"'");
+		:};
+
+// ========================================================================================================================S
+
+lista_sentencias ::= lista_sentencias:ls sentencia:s
+					{:
+						/* 
+						 * Como este es el caso recursivo, la lista sera creada 
+						 * en el caso embrionario.
+						*/
+						
+						// Devuelvo la lista
+						RESULT = new String(ls + s);
+						System.out.println("[Regla 10] - <lista_sentencias> - Se agrego la sentencia:\n'"+s.substring(1, s.length())+"'");
+					:}
+					| sentencia:s 	
+					{:
+						/*
+						 * Como este es el caso embrionario, aca se crea la 
+						 * lista de sentencias.
+						*/
+						
+							
+						// Creo y devuelvo la lista
+						RESULT = s;
+						System.out.println("[Regla 11] - <lista_sentencias> - Se agrego la sentencia:\n'"+s.substring(1, s.length())+"'");
+					:};
+					
+					
+sentencia ::= asignacion:asig
+				{:
+					RESULT = asig;
+					System.out.println("[Regla 12] - <sentencia> - '"+asig.substring(1, asig.length())+"' es una <asignacion>");
+				:}
+				| funcion_print:fp 
+				{:
+					RESULT = fp;
+					System.out.println("[Regla 13] - <sentencia> - Se encontro una <funcion_print>");		
+				:}
+				| funcion_if:fi
+				{:
+					RESULT = fi;
+					System.out.println("[Regla 14] - <sentencia> - Se encontro una <funcion_if>");
+				:}
+				| funcion_while:fw
+				{:
+					RESULT = fw;
+					System.out.println("[Regla 15] - <sentencia> - Se encontro una <funcion_while>");
+				:};
+
+
+asignacion ::= ID:id ASIGNA expresion:exp
+				{:
+					RESULT = new String("\n"+id + " = " + exp);
+					System.out.println("[Regla 16] - <asignacion> - '"+id+" = "+exp+"'");
+				:};
+
+
+expresion::= expresion:exp SUMA:op termino:term 
+			{:
+				RESULT = new String(exp + " + " + term);
+				System.out.println("[Regla 17] - <expresion> - Se encontro la suma '" + exp + " + " + term+"'");
+			:}
+			| expresion:exp RESTA:op termino:term
+			{:
+				RESULT = new String(exp + " - " + term);
+				System.out.println("[Regla 18] - <expresion> - Se encontro la resta '" + exp + " - " + term+"'");
+			:}
+			| termino:term
+			{:
+				RESULT = term;
+				System.out.println("[Regla 19] - <expresion> - '"+term+"' es un <termino>");
+			:};
+			
+			
+termino ::= termino:term MULTIPLICA:op factor:fac
+			{:
+				RESULT = new String(term + " * " + fac);
+				System.out.println("[Regla 20] - <termino> - Se encontro la multiplicacion '" + term + " * " + fac +"'");
+			:}
+			| termino:term DIVIDE:op factor:fac
+			{:
+				RESULT = new String(term + " / " + fac);
+				System.out.println("[Regla 21] - <termino> - Se encontro la division '" + term + " / " + fac +"'");
+			:}
+			| factor:fac
+			{:
+				RESULT = fac;
+				System.out.println("[Regla 22] - <termino> - '"+fac+"' es un <factor>");
+			:};
+			
+			
+factor ::= ID:fac
+		{:
+			RESULT = fac;
+			System.out.println("[Regla 23] - <factor> - Se encontro el ID '"+fac+"'");
+		:}
+		| CTE_INT:fac
+		{:
+			
+			RESULT = Integer.parseInt(fac);
+			System.out.println("[Regla 24] - <factor> - Se encontro la CTE_INT '"+Integer.parseInt(fac)+"'");
+		:}
+		| CTE_FLOAT:fac
+		{:
+			RESULT = Float.parseFloat(fac);
+			System.out.println("[Regla 25] - <factor> - Se encontro la CTE_FLOAT '"+Float.parseFloat(fac)+"'");
+		:}
+		| CTE_STRING:fac
+		{:
+			RESULT = fac;;
+			System.out.println("[Regla 25] - <factor> - Se encontro la CTE_STRING '"+fac+"'");
+		:}
+		| PAR_ABRE expresion:exp PAR_CIERRA 
+		{:
+			RESULT = exp;
+			System.out.println("[Regla 26] - <factor> - Se encontro la <expresion> '("+exp+")'");
+		:}
+		
+		| funcion_take:ftake
+		{:
+			RESULT = ftake;
+			System.out.println("[Regla 27] - <factor> - '"+ftake+"' es una <funcion_take>");
+		:};
+		
+
+funcion_take ::= TAKE PAR_ABRE op_num:op PUNTO_COMA CTE_INT:cint PUNTO_COMA COR_ABRE lista_take:lt COR_CIERRA PAR_CIERRA
+				{:
+					RESULT = new String("TAKE ( "+op+"; "+cint+"; [ "+lt+" ] )");
+					System.out.println("[Regla 28] - <take> - Se encontro 'TAKE (<op_num>;<CTE_INT>;[<lista_take>])'");
+				:}
+				| TAKE PAR_ABRE op_num:op PUNTO_COMA CTE_INT:cint PUNTO_COMA COR_ABRE COR_CIERRA PAR_CIERRA 
+				{:
+					RESULT = new String("0");
+					System.out.println("[Regla 29] - <take> - Se encontro 'TAKE (<op_num>;<CTE_INT>;[])'");
+				:}
+				;
+				
+op_num ::= SUMA:op 
+			{:
+				RESULT = op;
+				System.out.println("[Regla 30] - <op_num> - Se encontro el operador '"+op+"'");
+			:}
+			| RESTA:op
+			{:
+				RESULT = op;
+				System.out.println("[Regla 31] - <op_num> - Se encontro el operador '"+op+"'");
+			:}
+			| DIVIDE:op
+			{:
+				RESULT = op;
+				System.out.println("[Regla 32] - <op_num> - Se encontro el operador '"+op+"'");
+			:}
+			| MULTIPLICA:op
+			{:
+				RESULT = op;
+				System.out.println("[Regla 33] - <op_num> - Se encontro el operador '"+op+"'");
+			:};
+
+
+lista_take ::= lista_take:l PUNTO_COMA CTE_INT:cint 
+		{:
+			/*
+			 * Caso recursivo, toma la lista y agrega el integer
+			 * que recibio.
+			*/
+			// Devuelvo la lista de argumentos
+			RESULT =  l + " ; " + cint;
+			System.out.println("[Regla 34] - <lista_take> - Se encontro la CTE_INT '"+cint+"'");
+		:} 
+		| CTE_INT:cint
+		{:
+			/* 
+			 * Caso embrionario. Creo la lista y agrego el ultimo integer
+			 * que se recibe
+			*/
+
+			RESULT = cint;
+			System.out.println("[Regla 35] - <lista_take> - Se encontro la CTE_INT '"+cint+"'");
+		:};
+
+
+funcion_print ::= PRINT CTE_STRING:cstring 
+				{:	
+					RESULT = new String("\nPRINT "+cstring);
+					System.out.println("[Regla 36] - <funcion_print> - Se encontro PRINT '"+cstring+"'");
+				:};
+
+		
+funcion_if ::= IF PAR_ABRE condicion:cond PAR_CIERRA bloque:b
+			{:
+			 	RESULT = new String("\nIF ("+cond+")"+b);
+				System.out.println("[Regla 37] - <funcion_if> - Se encontro 'IF <cond> {<bloque>}'");
+			:}
+			 | IF PAR_ABRE condicion:cond PAR_CIERRA bloque:b ELSE bloque:bb
+			 {:
+			 	RESULT = new String("\nIF ("+cond+")"+b+"\nELSE"+bb);
+				System.out.println("[Regla 38] - <funcion_if> - Se encontro 'IF <cond> {<bloque>} ELSE {<bloque>}'");
+			 :};
+
+funcion_while ::= WHILE PAR_ABRE condicion:cond PAR_CIERRA bloque:b 
+				{:
+					RESULT = new String("\nWHILE ("+cond+")" +b);
+					System.out.println("[Regla 39] - <funcion_while> - Se encontro 'WHILE (<condicion>){<bloque>}'");
+				:};
+
+condicion ::= PAR_ABRE condicion:c1 PAR_CIERRA op_bin:op PAR_ABRE condicion:c2 PAR_CIERRA
+			{:
+				RESULT = new String("("+c1+") "+ op +" ("+ c2+")");
+				System.out.println("[Regla 40] - <condicion> - Se encontro '("+c1+") "+op+" ("+c2+")'");
+			:}
+			| PAR_ABRE condicion:c1 PAR_CIERRA op_logico:op PAR_ABRE condicion:c2 PAR_CIERRA
+			{:
+				RESULT = new String("(" +c1+ ") " +op+ " (" +c2+ ")");
+				System.out.println("[Regla 41] - <condicion> - Se encontro '("+c1+") "+op+" ("+c2+")'");
+			:}
+			|  PAR_ABRE condicion:c1 PAR_CIERRA op_logico:op expresion:e
+			{:
+				RESULT = new String("(" +c1+") "+ op +" "+ e);
+				System.out.println("[Regla 42] - <condicion> - Se encontro '("+c1+") "+op+" "+e+"'");
+			:}
+			| expresion:e op_logico:op PAR_ABRE condicion:c1 PAR_CIERRA
+			{:
+				RESULT = new String(e+" "+ op +" (" +c1+ ")");
+				System.out.println("[Regla 43] - <condicion> - Se encontro '"+e+" "+op+" ("+c1+")'");
+			:}
+			| expresion:e1 op_logico:op expresion:e2 
+			{:
+				RESULT = new String(e1+" "+ op +" "+ e2);
+				System.out.println("[Regla 44] - <condicion> - Se encontro '"+e1+" "+op+" "+e2+"'");
+			:};
+
+			
+bloque ::= LLAVE_ABRE lista_sentencias:ls LLAVE_CIERRA
+			{:
+				RESULT = new String("{"+ls+"\n}");
+				System.out.println("[Regla 45] - <bloque> - Se encontro:\n'{"+ls.substring(1, ls.length())+"}'");
+			:}
+			| LLAVE_ABRE LLAVE_CIERRA
+			{: 
+				RESULT = "";
+				System.out.println("[Regla 46] - <bloque> - Se encontro un bloque vacio '{}'");
+			:};
+
+
+op_logico ::= IGUAL:op
+			{:
+				RESULT = op;
+				System.out.println("[Regla 47] - <op_logico> - Se encontro el operador logico '"+op+"'");
+			:}
+			 | DISTINTO:op
+			 {:
+			 	RESULT = op;
+				System.out.println("[Regla 48] - <op_logico> - Se encontro el operador logico '"+op+"'");
+			 :} 
+			 | MENOR:op
+			 {:
+			 	RESULT = op;
+				System.out.println("[Regla 49] - <op_logico> - Se encontro el operador logico '"+op+"'");
+			 :}
+			 | MENOR_IGUAL:op
+			 {:
+			 	RESULT = op;
+				System.out.println("[Regla 50] - <op_logico> - Se encontro el operador logico '"+op+"'");
+			 :}
+			 | MAYOR:op
+			 {:
+			 	RESULT= op;
+				System.out.println("[Regla 51] - <op_logico> - Se encontro el operador logico '"+op+"'");
+			 :} 
+			 | MAYOR_IGUAL:op
+			 {:
+			 	RESULT = op;
+				System.out.println("[Regla 52] - <op_logico> - Se encontro el operador logico '"+op+"'");
+			 :};
+			 
+			 
+op_bin::= AND:op
+			 {:
+			 	RESULT = op;
+				System.out.println("[Regla 53] - <op_logico> - Se encontro el operador binario '"+op+"'");
+			 :}
+			 | OR:op
+			 {:
+			 	RESULT = op;
+				System.out.println("[Regla 54] - <op_logico> - Se encontro el operador binario '"+op+"'");
+			 :};
+			 
+
+
+
+
+
+
