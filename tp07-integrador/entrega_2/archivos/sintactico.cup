@@ -68,12 +68,6 @@ action code
 		return s;
 	}
 	
-	// Para escribir el analisis
-//  	private EscribeAnalisis e = new EscribeAnalisis("analisis_gramatico.txt");
-  	File file = new File("analisis_gramatico.txt");
-  	 PrintStream stream = new PrintStream(file);
-  	 System.setOut(stream);
-
 :}
 
 
@@ -107,11 +101,16 @@ non terminal String op_logico, op_num, op_bin;
 
 start with programa;
 
-
-programa ::= declaraciones BEGIN_PROGRAM lista_sentencias END_PROGRAM
+programa ::= BEGIN_PROGRAM funcion_print:f END_PROGRAM
+			{:
+				System.out.println("[Regla 00b] - <programa> - Se encontro <funcion_print> '"+f+"'");
+				System.out.println("[Regla 00] - <programa> - COMPILACION EXITOSA!");
+			:}
+			| declaraciones BEGIN_PROGRAM lista_sentencias END_PROGRAM
 			{: 
 				System.out.println("[Regla 00] - <programa> - COMPILACION EXITOSA!");
 			 :};
+			
 
 // ========================================================================================================================
 

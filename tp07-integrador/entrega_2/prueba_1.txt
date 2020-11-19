@@ -1,0 +1,30 @@
+</ prueba.txt />
+
+</ comentario </ anidado /> 123! />
+
+</ comentario </ anidado 
+con /> linebreak />
+
+DECLARE
+[suma, contador, d1] = [FLOAT, INT, FLOAT]
+[actual, contar, palabra] = [FLOAT, FLOAT, STRING]
+[var] = [INT]
+ENDDECLARE
+
+</ comentario </ simbolos /> raros !"#$%&/)= />
+
+</ END.PROGRAM />
+
+BEGIN.PROGRAM
+
+</ COMENTARIO </ anidado con
+linebreak  /> 123 />
+
+PRINT  "Prueba.txt lexico!"
+
+
+END.PROGRAM
+
+
+</ PRINT = "Esto debe ser ignorado" />
+

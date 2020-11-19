@@ -1,9 +1,9 @@
 package compilador;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
 
 
 // Para escribir el archivo de la tabla de simbolos
@@ -32,21 +32,26 @@ import java_cup.runtime.Symbol;
 	// Tabla de símbolos
 	private List<Map<Columna, String>> symtbl;
 	
-	
 	// Para escribir analisis lexico
 	private EscribeAnalisis e = new EscribeAnalisis("analisis_lexico.txt");
+	
+	Boolean sym_not_exists = true;
+	Boolean lex_not_exists = true;
 	
 	
 	// Inicializa la tabla de simbolos
 	private void iniTable() {
 		TablaSimbolos.escribirArchivo(null, null, false);
 		this.symtbl = TablaSimbolos.leerArchivo(null);
-		e.escribir("", false);
+		sym_not_exists = false;
 	}
 	
 	
 	// Agrega un simbolo de ID de variable
 	public void addSym(String nombre, String token, String tipo) {
+		if(sym_not_exists == true){
+			iniTable();
+		}
 		boolean encontrado = false;
 		int i = 0;
 		while (!encontrado && i < symtbl.size()) {
@@ -66,6 +71,9 @@ import java_cup.runtime.Symbol;
 	
 	// Agrega una constante 
 	public void addSym(String nombre, String token, String valor, Integer len) {
+		if(sym_not_exists == true){
+			iniTable();
+		}
 		boolean encontrado = false;
 		int i = 0;
 		while (!encontrado && i < symtbl.size()) {
@@ -97,9 +105,8 @@ import java_cup.runtime.Symbol;
 			if (number > INT_MAX_LEN){
 				return false;
 			}
-		}catch(Exception e){
-			System.out.println("Error parseando lexema " + yytext() + ".");
-			System.out.println(e.toString());
+		}catch(Exception ex){
+			e.escribir("Error parseando lexema '" + yytext() + "'", true);
 			return false;
 		}	
 		return true;
@@ -125,6 +132,11 @@ import java_cup.runtime.Symbol;
 	
 	// Imprime cada par token:lexema hallado
 	public void anuncio(String token){
+		if(lex_not_exists == true){
+			e = new EscribeAnalisis("analisis_lexico.txt");
+			e.escribir("", false);
+			lex_not_exists = false;
+		}
 		e.escribir("Lexema = '" + yytext() + "'\t\tToken = " + token + "\n", true);
 	}
   
@@ -162,15 +174,15 @@ ID = {LETRA}({LETRA}|{DIGITO}|\_)*
 
 COMEN_ABRE = \<\/
 COMEN_CIERRA = \/\>
-COMENTARIO = {COMEN_ABRE}[^\/\>]*{COMEN_CIERRA}
- //COMENTARIO = {COMEN_ABRE}~{COMEN_CIERRA}
+OPS = [\!\$\?\+\-\_\.\;\{\}\[\]\(\)\=\*\/\"\'\@\|\%\&\#]
+COMENTARIO = {COMEN_ABRE}({LETRA}|{DIGITO}|{ESPACIO}|{OPS})*{COMEN_CIERRA} | {COMEN_ABRE}({LETRA}|{DIGITO}|{ESPACIO}|{OPS})*{COMEN_ABRE}({LETRA}|{DIGITO}|{ESPACIO}|{OPS})*{COMEN_CIERRA}({LETRA}|{DIGITO}|{ESPACIO}|{OPS})*{COMEN_CIERRA}
 
 %%
 
 <YYINITIAL> {
-    "BEGIN.PROGRAM"		{anuncio("BEGIN.PROGRAM");		return new Symbol(sym.BEGIN_PROGRAM, yycolumn, yyline);}
+    "BEGIN.PROGRAM"		{anuncio("BEGIN.PROGRAM"); 		return new Symbol(sym.BEGIN_PROGRAM, yycolumn, yyline);}
     "END.PROGRAM"		{anuncio("END.PROGRAM"); 		return new Symbol(sym.END_PROGRAM, yycolumn, yyline);}
-    "DECLARE"           {anuncio("DECLARE");iniTable(); return new Symbol(sym.DECLARE, yycolumn, yyline);}
+    "DECLARE"           {anuncio("DECLARE");			return new Symbol(sym.DECLARE, yycolumn, yyline);}
     "ENDDECLARE"		{anuncio("ENDDECLARE"); 		return new Symbol(sym.ENDDECLARE, yycolumn, yyline);}
 	"="                	{anuncio("ASIGNA"); 			return new Symbol(sym.ASIGNA, yycolumn, yyline);}
     "=="                {anuncio("IGUAL"); 				return new Symbol(sym.IGUAL, yycolumn, yyline, new String(yytext()));}
@@ -203,7 +215,6 @@ COMENTARIO = {COMEN_ABRE}[^\/\>]*{COMEN_CIERRA}
     {ELSE}              {anuncio("ELSE"); 				return new Symbol(sym.ELSE, yycolumn, yyline);}
     {WHILE}             {anuncio("WHILE"); 				return new Symbol(sym.WHILE, yycolumn, yyline);}
 	{ID}				{anuncio("ID"); addSym(yytext(), "ID", null); return new Symbol(sym.ID, yycolumn, yyline, new String(yytext()));}
-	
 	{CTE_INT}			{
 							anuncio("CTE_INT");					
 							if (!checkInt(yytext())){	
@@ -219,6 +230,7 @@ COMENTARIO = {COMEN_ABRE}[^\/\>]*{COMEN_CIERRA}
 							return new Symbol(sym.CTE_FLOAT, yycolumn, yyline, new String(yytext()));}
 						
 	{CTE_STR}			{	anuncio("CTE_STR");
+
 							if (!checkStr(yytext())){
 								e.escribir("Lexema '" + yytext() + "' excede la longitud maxima de un String (" + STR_MAX_LEN + ").\n", true);		
 							}
@@ -235,9 +247,9 @@ COMENTARIO = {COMEN_ABRE}[^\/\>]*{COMEN_CIERRA}
 
 
 [^]	{ 
-	e.escribir("Caracter no permitido: <" + yytext() + "> en la linea " + yyline + " columna " + yycolumn + ".", true);
-	System.out.println("Caracter no permitido: <" + yytext() + "> en la linea " + yyline + " columna " + yycolumn + ".");
-	throw new Error("Caracter no permitido: <" + yytext() + "> en la linea " + yyline + " columna " + yycolumn + "."); 
+	e.escribir("Caracter no permitido: '" + yytext() + "' en la linea " + yyline + " columna " + yycolumn + ".", true);
+	System.out.println("Caracter no permitido: '" + yytext() + "' en la linea " + yyline + " columna " + yycolumn + ".");
+	throw new Error("Caracter no permitido: '" + yytext() + "' en la linea " + yyline + " columna " + yycolumn + "."); 
 }
 
 

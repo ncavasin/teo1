@@ -1,0 +1,25 @@
+</ prueba.txt />
+
+</ comentario </ anidado /> 123! />
+
+</ comentario </ anidado 
+con /> linebreak />
+
+
+</ comentario </ simbolos /> raros !"#$%&/)= />
+
+</ END.PROGRAM />
+
+BEGIN.PROGRAM
+
+</ COMENTARIO </ anidado con
+linebreak  /> 123 />
+
+PRINT  "Prueba.txt lexico!"
+
+
+END.PROGRAM
+
+
+</ PRINT = "Esto debe ser ignorado" />
+

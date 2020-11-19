@@ -12,7 +12,7 @@ import java.util.Map;
 public class TablaSimbolos {
 	
 	// Nombre de archivo
-	public static final String FILENAME = "archivos/tabla_simbolos.txt";
+	public static final String FILENAME = "tabla_simbolos.txt";
 	
 	// Columnas de la tabla de simbolos
 	public enum Columna {
@@ -23,16 +23,16 @@ public class TablaSimbolos {
 		LEN(5);
 		
 		private int numCol;
-		
+			
 		private Columna(int numCol) {
 			this.numCol = numCol;
 		}
-		
+			
 		public int getNumCol() {
 			return numCol;
 		}
-		
-		@Override
+			
+			@Override
 		public String toString() {
 			return this.name();
 		}
@@ -41,11 +41,11 @@ public class TablaSimbolos {
 	public static boolean escribirArchivo(List<Map<Columna, String>> lineas, String filename, boolean append) {
 		if (filename == null || "".equals(filename)) filename = FILENAME;
 		try (PrintWriter out = new PrintWriter(new FileWriter(filename, append))) {
-			final String formato = "|%31s|%15s|%15s|%31s|%10s|";
+			final String formato = "|%25s|%10s|%10s|%25s|%4s|";
 			
 			if (!append) {
 				out.println(String.format(formato, Columna.NOMBRE, Columna.TOKEN, Columna.TIPO, Columna.VALOR, Columna.LEN));
-				out.println("-------------------------------------------------------------------------------------------------------------");
+				out.println("--------------------------------------------------------------------------------");
 			}
 			
 			if (lineas != null)
@@ -66,7 +66,7 @@ public class TablaSimbolos {
 		return true;
 	}
 	
-		public static List<Map<Columna, String>> leerArchivo(String filename) {
+	public static List<Map<Columna, String>> leerArchivo(String filename) {
 		if (filename == null || "".equals(filename)) filename = FILENAME;
 		List<Map<Columna, String>> filas = new ArrayList<Map<Columna, String>>();
 		try (BufferedReader in = new BufferedReader(new FileReader(filename))) {
