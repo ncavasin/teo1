@@ -6,6 +6,8 @@ En el repo se dejaron 3 versiones de prueba diferentes:
 - *prueba_2.txt*: contiene solo la sentencia de invocación a la funcion print.
 - *prueba_3-completa.txt*: contiene declaraciones y sentencias.
 
+***Nota:*** el programa no reconoce tildes, si las utiliza recibirá un error de parsing.
+
 ## Salida:
 *compilador.jar* mostrará en pantalla las reglas que se aplicaron para parsear el codigo fuente procesado. Adicionalmente, se escriben tres archivos en formato *.txt*:
 - *tabla_simbolos.txt*: contiene la tabla de simbolos.
