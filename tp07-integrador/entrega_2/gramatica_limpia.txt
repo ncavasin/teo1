@@ -1,0 +1,55 @@
+<programa> ::= <declaraciones> BEGIN_PROGRAM <lista_sentencias> END_PROGRAM | BEGIN_PROGRAM <funcion_print> END_PROGRAM
+
+<declaraciones> ::= DECLARE <lista_declaraciones> ENDDECLARE 
+
+<lista_declaraciones> ::= <lista_declaraciones> <linea_declaracion> | <linea_declaracion>
+
+<linea_declaracion> ::= COR_ABRE <declaracion> COR_CIERRA
+
+<declaracion> ::=  ID COMA <declaracion> COMA <tipo> | ID COR_CIERRA ASIGNA COR_ABRE <tipo>
+
+<tipo> ::= INT | FLOAT | STRING
+
+<lista_sentencias> ::= <lista_sentencias> <sentencia> | <sentencia>
+
+<sentencia> ::= <asignacion> | <funcion_print> | <funcion_if> | <funcion_while>
+
+<asignacion> ::= ID ASIGNA <expresion>
+
+<expresion> ::= <expresion> SUMA <termino> | <expresion> RESTA <termino> | <termino>
+
+<termino> ::= <termino> MULTIPLICA <factor> | <termino> DIVIDE <factor> | <factor>
+
+<factor> ::= ID | CTE_INT | CTE_FLOAT | CTE_STRING | PAR_ABRE <expresion> PAR_CIERRA | <funcion_take>
+
+<funcion_take> ::= TAKE PAR_ABRE <op_num> PUNTO_COMA CTE_INT PUNTO_COMA COR_ABRE <lista_take> COR_CIERRA PAR_CIERRA 
+				 | TAKE PAR_ABRE <op_num> PUNTO_COMA CTE_INT PUNTO_COMA COR_ABRE COR_CIERRA PAR_CIERRA 
+					
+<op_sum> ::= SUMA | RESTA | DIVIDE | MULTIPLICA
+
+<lista_take> ::= <lista_take> PUNTO_COMA CTE_INT | CTE_INT
+
+<funcion_print> ::= PRINT CTE_STRING
+
+<funcion_if> ::= IF PAR_ABRE <condicion> PAR_CIERRA <bloque> | IF PAR_ABRE <condicion> PAR_CIERRA <bloque> ELSE <bloque>
+
+<funcion_while> ::= WHILE PAR_ABRE <condicion> PAR_CIERRA <bloque>
+
+<condicion> ::= PAR_ABRE <condicion> PAR_CIERRA <op_bin> PAR_ABRE <condicion> PAR_CIERRA
+				| PAR_ABRE <condicion> PAR_CIERRA <op_logico> PAR_ABRE <condicion> PAR_CIERRA
+				| PAR_ABRE <condicion> PAR_CIERRA <op_logico> <expresion>
+				| <expresion> <op_logico> PAR_ABRE <condicion> PAR_CIERRA
+				| <expresion> <op_logico> <expresion>
+				
+<bloque> ::= LLAVE_ABRE <lista_sentencias< LLAVE_CIERRA
+
+<op_logico> ::= IGUAL | DISTINTO | MENOR | MAYOR | MAYOR_IGUAL
+
+<op_bin> ::= AND | OR
+
+
+
+
+
+
+
