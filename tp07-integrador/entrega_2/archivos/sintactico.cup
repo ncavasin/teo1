@@ -89,11 +89,12 @@ non terminal programa;
 non terminal declaraciones, lista_declaraciones, linea_declaracion;
 non terminal Map<String, Deque> declaracion;
 non terminal String tipo;
-non terminal String lista_sentencias,  sentencia, asignacion;
+non terminal String lista_sentencias, sentencia, asignacion;
 non terminal bloque;
 non terminal expresion, termino, factor, funcion_take; 
 
 non terminal String funcion_print, funcion_if, funcion_while, lista_take;
+non terminal String lista_condiciones;
 non terminal condicion;
 non terminal String op_logico, op_num, op_bin;
 
@@ -304,11 +305,6 @@ factor ::= ID:fac
 			RESULT = Float.parseFloat(fac);
 			System.out.println("[Regla 25] - <factor> - Se encontro la CTE_FLOAT '"+Float.parseFloat(fac)+"'");
 		:}
-		| CTE_STRING:fac
-		{:
-			RESULT = fac;;
-			System.out.println("[Regla 25] - <factor> - Se encontro la CTE_STRING '"+fac+"'");
-		:}
 		| PAR_ABRE expresion:exp PAR_CIERRA 
 		{:
 			RESULT = exp;
@@ -385,44 +381,35 @@ funcion_print ::= PRINT CTE_STRING:cstring
 				:};
 
 		
-funcion_if ::= IF PAR_ABRE condicion:cond PAR_CIERRA bloque:b
+funcion_if ::= IF PAR_ABRE lista_condiciones:cond PAR_CIERRA bloque:b
 			{:
 			 	RESULT = new String("\nIF ("+cond+")"+b);
 				System.out.println("[Regla 37] - <funcion_if> - Se encontro 'IF <cond> {<bloque>}'");
 			:}
-			 | IF PAR_ABRE condicion:cond PAR_CIERRA bloque:b ELSE bloque:bb
+			 | IF PAR_ABRE lista_condiciones:cond PAR_CIERRA bloque:b ELSE bloque:bb
 			 {:
 			 	RESULT = new String("\nIF ("+cond+")"+b+"\nELSE"+bb);
 				System.out.println("[Regla 38] - <funcion_if> - Se encontro 'IF <cond> {<bloque>} ELSE {<bloque>}'");
 			 :};
 
-funcion_while ::= WHILE PAR_ABRE condicion:cond PAR_CIERRA bloque:b 
+funcion_while ::= WHILE PAR_ABRE lista_condiciones:cond PAR_CIERRA bloque:b 
 				{:
 					RESULT = new String("\nWHILE ("+cond+")" +b);
 					System.out.println("[Regla 39] - <funcion_while> - Se encontro 'WHILE (<condicion>){<bloque>}'");
 				:};
 
-condicion ::= PAR_ABRE condicion:c1 PAR_CIERRA op_bin:op PAR_ABRE condicion:c2 PAR_CIERRA
-			{:
-				RESULT = new String("("+c1+") "+ op +" ("+ c2+")");
-				System.out.println("[Regla 40] - <condicion> - Se encontro '("+c1+") "+op+" ("+c2+")'");
-			:}
-			| PAR_ABRE condicion:c1 PAR_CIERRA op_logico:op PAR_ABRE condicion:c2 PAR_CIERRA
-			{:
-				RESULT = new String("(" +c1+ ") " +op+ " (" +c2+ ")");
-				System.out.println("[Regla 41] - <condicion> - Se encontro '("+c1+") "+op+" ("+c2+")'");
-			:}
-			|  PAR_ABRE condicion:c1 PAR_CIERRA op_logico:op expresion:e
-			{:
-				RESULT = new String("(" +c1+") "+ op +" "+ e);
-				System.out.println("[Regla 42] - <condicion> - Se encontro '("+c1+") "+op+" "+e+"'");
-			:}
-			| expresion:e op_logico:op PAR_ABRE condicion:c1 PAR_CIERRA
-			{:
-				RESULT = new String(e+" "+ op +" (" +c1+ ")");
-				System.out.println("[Regla 43] - <condicion> - Se encontro '"+e+" "+op+" ("+c1+")'");
-			:}
-			| expresion:e1 op_logico:op expresion:e2 
+
+lista_condiciones ::= PAR_ABRE condicion:c1 PAR_CIERRA op_bin:op PAR_ABRE condicion:c2 PAR_CIERRA
+					{:
+						RESULT = new String("("+c1+") "+ op +" ("+ c2+")");
+						System.out.println("[Regla 40] - <condicion> - Se encontro '("+c1+") "+op+" ("+c2+")'");
+					:}
+					| PAR_ABRE condicion:c PAR_CIERRA
+					{:
+						RESULT = new String("(" + c + ")")
+					:};
+
+condicion ::= expresion:e1 op_logico:op expresion:e2 
 			{:
 				RESULT = new String(e1+" "+ op +" "+ e2);
 				System.out.println("[Regla 44] - <condicion> - Se encontro '"+e1+" "+op+" "+e2+"'");

@@ -27,12 +27,12 @@ contar = 18.22
 
 </ if />
 
-if (contar <> 23){
+if ((5 > 23) < (2 > 3)){
 	palabra = "Esto es una 'palabra'"
 }
 
 while (contador <= 92) {
-	contador = contador + 1
+	contador = contador +1 
 	actual = (contador / 0.342) + (contador * (contar + 4.67))
 	suma = suma + actual
 }
